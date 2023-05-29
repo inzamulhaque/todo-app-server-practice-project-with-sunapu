@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import {
+  checkPasswordSevice,
   createNewUserService,
   findUserByEmailService,
 } from "../services/user.services";
+import generateToken from "../utils/token";
 
 const createNewUser = async (
   req: Request,
@@ -18,7 +20,6 @@ const createNewUser = async (
       securityQuestion,
       securityAns,
     } = req.body;
-    
 
     const user = await findUserByEmailService(email);
 
@@ -48,9 +49,47 @@ const createNewUser = async (
     }
 
     res.status(201).json({ success: true, msg: "user created", result });
-  } catch (error) {    
+  } catch (error) {
     res.status(400).json({ success: false, msg: "user not created" });
   }
 };
 
-export { createNewUser };
+const login = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password){
+      return res.status(400).json({ success: false, msg: "please provide the user email and password" });
+    }
+
+    const user = await findUserByEmailService(email);
+
+    if (!user) {
+      return res.status(400).json({ success: false, msg: "user not found" });
+    }
+
+    const isPasswordValid = await checkPasswordSevice(password, user.password)
+    
+    if (!isPasswordValid) {
+      return res.status(400).json({ success: false, msg: "Passwoed not match!" });
+    }
+
+    const token = generateToken(email);
+
+    res.status(200).json({
+      success: true,
+      msg: "Successfully logged in",
+      result: {
+        email: user.email,
+        name: user.name,
+        token
+      }
+    });
+
+
+  } catch (error) {
+    res.status(400).json({ success: false, msg: "login failed" });
+  }
+};
+
+export { createNewUser, login };

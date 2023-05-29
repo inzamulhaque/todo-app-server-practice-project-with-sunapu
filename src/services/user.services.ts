@@ -18,8 +18,13 @@ const createNewUserService = async (
     name,
     email,
     password,
-    securityQuestion:{question:securityQuestion,ans:securityAns}
+    securityQuestion: { question: securityQuestion, ans: securityAns },
   });
 };
 
-export { findUserByEmailService, createNewUserService };
+const checkPasswordSevice = async (password: string, hash: string) => {
+  const isPasswordValid = await bcrypt.compareSync(password, hash);
+  return isPasswordValid;
+};
+
+export { findUserByEmailService, createNewUserService, checkPasswordSevice };
