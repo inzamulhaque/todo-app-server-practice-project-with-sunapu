@@ -58,8 +58,11 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password){
-      return res.status(400).json({ success: false, msg: "please provide the user email and password" });
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        msg: "please provide the user email and password",
+      });
     }
 
     const user = await findUserByEmailService(email);
@@ -68,10 +71,12 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(400).json({ success: false, msg: "user not found" });
     }
 
-    const isPasswordValid = await checkPasswordSevice(password, user.password)
-    
+    const isPasswordValid = await checkPasswordSevice(password, user.password);
+
     if (!isPasswordValid) {
-      return res.status(400).json({ success: false, msg: "Passwoed not match!" });
+      return res
+        .status(400)
+        .json({ success: false, msg: "Passwoed not match!" });
     }
 
     const token = generateToken(email);
@@ -82,14 +87,36 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       result: {
         email: user.email,
         name: user.name,
-        token
-      }
+        token,
+      },
     });
-
-
   } catch (error) {
     res.status(400).json({ success: false, msg: "login failed" });
   }
 };
 
-export { createNewUser, login };
+const forgotpassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email } = req.body;
+
+    const user = await findUserByEmailService(email);
+
+    if (!user) {
+      return res.status(400).json({ success: false, msg: "user not found" });
+    }
+
+    const securityQuestion: string = user?.securityQuestion?.question;
+
+    res
+      .status(200)
+      .json({ success: true, msg: "user found", result: { securityQuestion } });
+  } catch (error) {
+    res.status(400).json({ success: false, msg: "user not found" });
+  }
+};
+
+export { createNewUser, login, forgotpassword };
