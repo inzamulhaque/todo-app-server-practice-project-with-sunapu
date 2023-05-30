@@ -27,4 +27,18 @@ const checkPasswordSevice = async (password: string, hash: string) => {
   return isPasswordValid;
 };
 
-export { findUserByEmailService, createNewUserService, checkPasswordSevice };
+const setNewPasswordService = async (email: string, srtPass: string) => {
+  const password = bcrypt.hashSync(srtPass);
+  return await User.findOneAndUpdate(
+    { email },
+    { password },
+    { runValidators: true }
+  );
+};
+
+export {
+  findUserByEmailService,
+  createNewUserService,
+  checkPasswordSevice,
+  setNewPasswordService,
+};
