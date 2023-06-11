@@ -4,8 +4,8 @@ import {
   createNewUserService,
   findUserByEmailService,
   setNewPasswordService,
-} from "../services/user.services";
-import generateToken from "../utils/token";
+} from "./user.services";
+import generateToken from "../../../utils/token";
 
 const createNewUser = async (
   req: Request,

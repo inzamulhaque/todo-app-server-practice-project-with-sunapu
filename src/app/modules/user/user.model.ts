@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import { IUser } from "./user.interface";
 
 
-const userSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema<IUser>(
   {
     name: {
       type: String,
@@ -20,6 +21,7 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
+      required: [true, "Password is required"],
     },
 
     securityQuestion: {

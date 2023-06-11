@@ -3,7 +3,7 @@ import {
   forgotpassword,
   login,
   setNewPassword,
-} from "../controllers/user.controller";
+} from "./user.controller";
 import express from "express";
 const router = express.Router();
 
