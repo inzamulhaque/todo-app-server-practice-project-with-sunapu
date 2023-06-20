@@ -35,5 +35,18 @@ export const updateCatNameService = async (
   );
 
   return result;
+};
 
+export const deleteCatServices = async (user: object, catName: string) => {
+    const categories = (user as any).categories.filter((value: string)=>value!==catName);
+
+    const result = await User.findOneAndUpdate(
+        { email: (user as any).email },
+        { categories: categories },
+        {
+          runValidators: true,
+        }
+      );
+    
+      return result;
 };
