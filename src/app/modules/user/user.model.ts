@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema<IUser>(
       required: [true, "Password is required"],
     },
 
+    categories: [
+      {type: String}
+    ],
+
     securityQuestion: {
       question: {
         type: String,
@@ -34,6 +38,8 @@ const userSchema = new mongoose.Schema<IUser>(
         required: true,
       },
     },
+
+    
   },
   {
     timestamps: true,

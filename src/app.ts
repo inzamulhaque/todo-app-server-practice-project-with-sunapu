@@ -4,6 +4,7 @@ import cors from "cors";
 
 // import routes
 import userRoute from './app/modules/user/user.routes';
+import categoriesRoute from './app/modules/categories/categories.routes';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(cors());
 
 // routes
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/category", categoriesRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).send("Route is working!");
