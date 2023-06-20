@@ -13,3 +13,27 @@ export const createCategoryServices = async (user: object, cat: string) => {
 
   return result;
 };
+
+export const updateCatNameService = async (
+  user: object,
+  oldCatName: string,
+  newCatName: string
+) => {
+  const updateCategory = (user as any).categories;
+  const catIndex = updateCategory.indexOf(oldCatName);
+
+  if (catIndex !== -1) {
+    updateCategory[catIndex] = newCatName;
+  }
+
+  const result = await User.findOneAndUpdate(
+    { email: (user as any).email },
+    { categories: updateCategory },
+    {
+      runValidators: true,
+    }
+  );
+
+  return result;
+
+};

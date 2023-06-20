@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { findUserByEmailService } from "../user/user.services";
-import { createCategoryServices } from "./categories.services";
+import {
+  createCategoryServices,
+  updateCatNameService,
+} from "./categories.services";
 
 export const addNewCategory = async (req: Request, res: Response) => {
   try {
@@ -31,6 +34,64 @@ export const addNewCategory = async (req: Request, res: Response) => {
 
     res.status(201).json({ success: true, msg: "category added", result });
   } catch (error) {
+    res.status(400).json({ success: false, msg: "user is not logged in" });
+  }
+};
+
+export const getAllCat = async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "user is not logged in" });
+    }
+
+    const fullUser = await findUserByEmailService(user.email);
+
+    if (!fullUser) {
+      return res.status(400).json({ success: false, msg: "user not found" });
+    }
+
+    res.status(200).json({ success: true, msg: "categories found", result: (fullUser as any).categories });
+  } catch (error) {
+    res.status(400).json({ success: false, msg: "user is not logged in" });
+  }
+};
+
+export const updateCategory = async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    const { oldCatName, newCatName } = req.body;
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "user is not logged in" });
+    }
+
+    const fullUser = await findUserByEmailService(user.email);
+
+    if (!fullUser) {
+      return res.status(400).json({ success: false, msg: "user not found" });
+    }
+
+    const result = await updateCatNameService(fullUser, oldCatName, newCatName);
+
+    if (!result) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "category name not updated" });
+    }
+
+    const { password, ...newResult } = result.toObject();
+
+    res
+      .status(200)
+      .json({ success: true, msg: "category name updated", result: newResult });
+  } catch (error) {
+    console.log(error);
     res.status(400).json({ success: false, msg: "user is not logged in" });
   }
 };
